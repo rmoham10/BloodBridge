@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Request Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            width: 50%;
+            margin: auto;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+        input, textarea, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<h1>Request Blood</h1>
+<!-- <form id="requestBloodForm" action="/api/admin/request-blood" method="post"> -->
+<div class="container">
+<form id="requestBloodForm">
+    <!-- Blood Group ID -->
+    <label for="bloodGroupId">Enter Blood Group ID:</label>
+    <!-- <input type="number" id="bloodGroupId" name="bloodGroupId" required placeholder="e.g., 1 for A+, 2 for A-, etc."> -->
+    <select id="bloodGroupId" name="bloodGroupId" required>
+        <option value="" disabled selected>Select your blood group</option>
+        <option value="1">A+</option>
+        <option value="2">A-</option>
+        <option value="3">B+</option>
+        <option value="4">B-</option>
+        <option value="5">AB+</option>
+        <option value="6">AB-</option>
+        <option value="7">O+</option>
+        <option value="8">O-</option>
+    </select>
+
+    <!-- Clinic Details -->
+    <label for="clinicDetails">Clinic/Hospital Details:</label>
+    <textarea id="clinicDetails" name="clinicDetails" rows="4" cols="50" placeholder="Enter clinic or hospital details here" required></textarea>
+
+    <!-- Submit Button -->
+    <button type="submit">Send Request</button>
+</form>
+<div id="responseMessage"></div>
+</div>
+
+<script>
+    const form = document.getElementById("requestBloodForm");
+    //console.log(form);
+    const responseMessage = document.getElementById("responseMessage");
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        //  Print FormData contents to the console
+        console.log("FormData contents:");
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value); // For file, it will log the File object
+        }
+        //console.log(formData);
+
+        try {
+            const response = await fetch("/api/admin/request-blood", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                responseMessage.innerText = "Blood request successfully sent to eligible donors!";
+                form.reset();
+            } else {
+                const errorData = await response.json();
+                responseMessage.innerText = `Error: ${errorData.message}`;
+            }
+        } catch (error) {
+            responseMessage.innerText = "An error occurred. Please try again later.";
+        }
+    });
+</script>
+</body>
+</html>
